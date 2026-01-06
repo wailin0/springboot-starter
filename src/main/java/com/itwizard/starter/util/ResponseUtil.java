@@ -1,6 +1,5 @@
 package com.itwizard.starter.util;
 
-import com.itwizard.starter.modules.auth.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

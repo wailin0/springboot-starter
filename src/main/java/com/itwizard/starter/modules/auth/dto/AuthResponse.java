@@ -5,7 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class UserRegisterDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class AuthResponse {
+    private String token;
     private String username;
-    private String password;
+    private String role;
 }
+

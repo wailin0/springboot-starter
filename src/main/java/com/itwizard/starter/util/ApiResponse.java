@@ -1,4 +1,4 @@
-package com.itwizard.starter.modules.auth.dto;
+package com.itwizard.starter.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,3 +17,4 @@ public class ApiResponse {
         this.message = message;
     }
 }
+

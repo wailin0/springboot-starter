@@ -24,7 +24,6 @@ public class JwtUtil {
     }
 
     public String generateToken(JwtPayload jwtPayload) {
-
         Instant now = Instant.now();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -34,10 +33,9 @@ public class JwtUtil {
                 .subject(jwtPayload.getUsername())
                 .claim("role", jwtPayload.getRole())
                 .build();
-        // @formatter:on
-        JwsHeader jwsHeader = JwsHeader
-                .with(MacAlgorithm.HS256).build();
+
+        JwsHeader jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
         return this.encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
-
 }
+
