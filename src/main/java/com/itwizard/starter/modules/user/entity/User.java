@@ -1,10 +1,8 @@
-package com.itwizard.starter.auth.entity;
+package com.itwizard.starter.modules.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
-
-import java.util.List;
 
 @Data
 @Entity

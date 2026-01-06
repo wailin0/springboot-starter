@@ -1,4 +1,4 @@
-package com.itwizard.starter.auth.dto;
+package com.itwizard.starter.modules.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

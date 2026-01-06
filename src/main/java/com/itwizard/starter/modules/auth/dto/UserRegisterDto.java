@@ -1,14 +1,11 @@
-package com.itwizard.starter.auth.dto;
+package com.itwizard.starter.modules.auth.dto;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
+import lombok.NoArgsConstructor;
 
 @Data
 public class UserRegisterDto {
-
     private String username;
     private String password;
-
 }

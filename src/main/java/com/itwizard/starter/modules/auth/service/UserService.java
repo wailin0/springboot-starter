@@ -1,6 +1,6 @@
-package com.itwizard.starter.auth.service;
+package com.itwizard.starter.modules.auth.service;
 
-import com.itwizard.starter.auth.dto.ApiResponse;
+import com.itwizard.starter.modules.auth.dto.ApiResponse;
 import com.itwizard.starter.util.ResponseUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

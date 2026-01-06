@@ -1,6 +1,6 @@
 package com.itwizard.starter.util;
 
-import com.itwizard.starter.auth.dto.JwtPayload;
+import com.itwizard.starter.modules.auth.dto.JwtPayload;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;

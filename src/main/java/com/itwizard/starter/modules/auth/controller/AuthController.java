@@ -1,10 +1,10 @@
-package com.itwizard.starter.auth.controller;
+package com.itwizard.starter.modules.auth.controller;
 
-import com.itwizard.starter.auth.dto.ApiResponse;
-import com.itwizard.starter.auth.dto.JwtPayload;
-import com.itwizard.starter.auth.dto.UserRegisterDto;
-import com.itwizard.starter.auth.entity.User;
-import com.itwizard.starter.auth.repository.UserRepository;
+import com.itwizard.starter.modules.auth.dto.ApiResponse;
+import com.itwizard.starter.modules.auth.dto.JwtPayload;
+import com.itwizard.starter.modules.auth.dto.UserRegisterDto;
+import com.itwizard.starter.modules.auth.entity.User;
+import com.itwizard.starter.modules.auth.repository.UserRepository;
 import com.itwizard.starter.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

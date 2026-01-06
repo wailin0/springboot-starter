@@ -1,8 +1,7 @@
-package com.itwizard.starter.auth.controller;
+package com.itwizard.starter.modules.user.controller;
 
-import com.itwizard.starter.auth.dto.ApiResponse;
-import com.itwizard.starter.auth.entity.User;
-import com.itwizard.starter.auth.repository.UserRepository;
+import com.itwizard.starter.modules.user.entity.User;
+import com.itwizard.starter.modules.user.repository.UserRepository;
 import com.itwizard.starter.util.ResponseUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
