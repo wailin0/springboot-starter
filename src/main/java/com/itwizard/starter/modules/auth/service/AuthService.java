@@ -5,6 +5,7 @@ import com.itwizard.starter.exception.ResourceNotFoundException;
 import com.itwizard.starter.exception.UnauthorizedException;
 import com.itwizard.starter.exception.ValidationException;
 import com.itwizard.starter.modules.auth.dto.LoginRequest;
+import com.itwizard.starter.modules.auth.dto.LoginResponseDto;
 import com.itwizard.starter.modules.auth.dto.RegisterRequest;
 import com.itwizard.starter.modules.user.repository.UserRepository;
 import com.itwizard.starter.util.JwtUtil;
@@ -38,7 +39,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public String login(LoginRequest request) {
+    public LoginResponseDto login(LoginRequest request) throws Exception {
         User user = userRepository.findByUsername(request.getUsername());
 
         if (user == null) {
@@ -53,11 +54,22 @@ public class AuthService {
             throw new UnauthorizedException("User account is disabled");
         }
 
-        JwtPayload jwtPayload = new JwtPayload();
-        jwtPayload.setUsername(user.getUsername());
-        jwtPayload.setRole(user.getRole());
+        JwtPayload jwtPayload = JwtPayload.builder()
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
 
-        return jwtUtil.generateToken(jwtPayload);
+        String accessToken = jwtUtil.generateToken(jwtPayload);
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), "TODO(payload): real-ip",
+                "TODO(payload): real-user-agent");
+
+        return LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public String refreshNewAccessToken(String oldToken) throws Exception {
+        return this.jwtUtil.refreshNewAccessToken(oldToken);
     }
 }
-
