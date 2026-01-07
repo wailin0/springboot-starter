@@ -43,8 +43,8 @@ public class JwtUtil {
         return this.encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
-    public String generateRefreshToken(Long userId, String ip, String agent) throws Exception {
-        String token = refreshTokenUtil.generateRefreshToken(userId, ip, agent);
+    public String generateRefreshToken(Long userId, TokenGenerateParam param) throws Exception {
+        String token = refreshTokenUtil.generateRefreshToken(userId, param.getIp(), param.getUserAgent());
         return token;
     }
 
