@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  wailin0_be_postgres:
+    image: postgres:13
+    container_name: wailin0_be_postgres_container
+    environment:
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=password
+       - POSTGRES_DB=starterdb
+       - POSTGRES_PORT=5432
+    volumes:
+      - ./.postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"  # Bind to localhost only
