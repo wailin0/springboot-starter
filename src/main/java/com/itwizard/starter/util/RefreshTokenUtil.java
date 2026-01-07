@@ -76,10 +76,7 @@ public class RefreshTokenUtil {
       throw new UnauthorizedException("TODO(i18n): Invalid refresh token");
     }
 
-    // TODO: revoke refresh token, so, generate new one
-    // INFO: if revoke old-token, must generate also refresh-token again.
-    // WARN: prevent re-play attack!
-    // this.revokeRefreshToken(refreshToken);
+    this.revokeRefreshToken(refreshToken);
 
     return refreshToken.getUser();
   }

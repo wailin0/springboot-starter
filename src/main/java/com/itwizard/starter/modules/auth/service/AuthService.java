@@ -69,7 +69,22 @@ public class AuthService {
                 .build();
     }
 
-    public String refreshNewAccessToken(String oldToken) throws Exception {
-        return this.jwtUtil.refreshNewAccessToken(oldToken);
+    public LoginResponseDto refreshNewAccessToken(
+            String oldToken, TokenGenerateParam param) throws Exception {
+
+        User user = this.jwtUtil.revokeRefreshToken(oldToken);
+
+        JwtPayload jwtPayload = JwtPayload.builder()
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
+
+        String refreshToken = this.jwtUtil.generateRefreshToken(user.getId(), param);
+        String accessToken = this.jwtUtil.generateToken(jwtPayload);
+
+        return LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }

@@ -48,18 +48,8 @@ public class JwtUtil {
         return token;
     }
 
-    /**
-     * INFO: just generate access-token
-     * WARN: to prevent re-play attack, must generate refresh token, if refresh
-     * token is used.
-     */
-    public String refreshNewAccessToken(String token) throws Exception {
+    public User revokeRefreshToken(String token) throws Exception {
         User user = refreshTokenUtil.verify(token);
-        JwtPayload payload = JwtPayload.builder()
-                .username(user.getUsername())
-                .role(user.getRole())
-                .build();
-
-        return generateToken(payload);
+        return user;
     }
 }

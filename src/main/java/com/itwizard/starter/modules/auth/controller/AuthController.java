@@ -53,9 +53,16 @@ public class AuthController {
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<ApiResponse> register(@Valid @RequestBody RefreshTokenRequestDto request) throws Exception {
-        String newAccessToken = authService.refreshNewAccessToken(request.getToken());
+    public ResponseEntity<ApiResponse> register(
+            HttpServletRequest request,
+            @RequestHeader(value = "User-Agent") String userAgent,
+            @Valid @RequestBody RefreshTokenRequestDto requestDto) throws Exception {
 
-        return ResponseUtil.created("TODO(i18n): refresh new access-token", newAccessToken);
+        String ip = this.httpUtil.getClientIp(request);
+
+        LoginResponseDto tokens = authService.refreshNewAccessToken(requestDto.getToken(),
+                new TokenGenerateParam(ip, userAgent));
+
+        return ResponseUtil.created("TODO(i18n): refresh new access-token", tokens);
     }
 }
