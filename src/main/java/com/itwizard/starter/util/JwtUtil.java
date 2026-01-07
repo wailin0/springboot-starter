@@ -43,23 +43,13 @@ public class JwtUtil {
         return this.encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
-    public String generateRefreshToken(Long userId, String ip, String agent) throws Exception {
-        String token = refreshTokenUtil.generateRefreshToken(userId, ip, agent);
+    public String generateRefreshToken(Long userId, TokenGenerateParam param) throws Exception {
+        String token = refreshTokenUtil.generateRefreshToken(userId, param.getIp(), param.getUserAgent());
         return token;
     }
 
-    /**
-     * INFO: just generate access-token
-     * WARN: to prevent re-play attack, must generate refresh token, if refresh
-     * token is used.
-     */
-    public String refreshNewAccessToken(String token) throws Exception {
+    public User revokeRefreshToken(String token) throws Exception {
         User user = refreshTokenUtil.verify(token);
-        JwtPayload payload = JwtPayload.builder()
-                .username(user.getUsername())
-                .role(user.getRole())
-                .build();
-
-        return generateToken(payload);
+        return user;
     }
 }

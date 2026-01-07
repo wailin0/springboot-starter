@@ -9,6 +9,7 @@ import com.itwizard.starter.modules.auth.dto.LoginResponseDto;
 import com.itwizard.starter.modules.auth.dto.RegisterRequest;
 import com.itwizard.starter.modules.user.repository.UserRepository;
 import com.itwizard.starter.util.JwtUtil;
+import com.itwizard.starter.util.TokenGenerateParam;
 import com.itwizard.starter.modules.auth.dto.JwtPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +40,7 @@ public class AuthService {
         return userRepository.save(user);
     }
 
-    public LoginResponseDto login(LoginRequest request) throws Exception {
+    public LoginResponseDto login(LoginRequest request, TokenGenerateParam param) throws Exception {
         User user = userRepository.findByUsername(request.getUsername());
 
         if (user == null) {
@@ -60,8 +61,7 @@ public class AuthService {
                 .build();
 
         String accessToken = jwtUtil.generateToken(jwtPayload);
-        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), "TODO(payload): real-ip",
-                "TODO(payload): real-user-agent");
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), param);
 
         return LoginResponseDto.builder()
                 .accessToken(accessToken)
@@ -69,7 +69,22 @@ public class AuthService {
                 .build();
     }
 
-    public String refreshNewAccessToken(String oldToken) throws Exception {
-        return this.jwtUtil.refreshNewAccessToken(oldToken);
+    public LoginResponseDto refreshNewAccessToken(
+            String oldToken, TokenGenerateParam param) throws Exception {
+
+        User user = this.jwtUtil.revokeRefreshToken(oldToken);
+
+        JwtPayload jwtPayload = JwtPayload.builder()
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
+
+        String refreshToken = this.jwtUtil.generateRefreshToken(user.getId(), param);
+        String accessToken = this.jwtUtil.generateToken(jwtPayload);
+
+        return LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }
