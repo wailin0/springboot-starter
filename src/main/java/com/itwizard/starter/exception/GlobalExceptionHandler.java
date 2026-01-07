@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +46,37 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ApiResponse(false, "Access denied", null));
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiResponse> handleJwtException(JwtException ex) {
+        String message = "Token is invalid";
+        
+        String exceptionMessage = ex.getMessage();
+        if (exceptionMessage != null && exceptionMessage.toLowerCase().contains("expired")) {
+            message = "Token is expired";
+        }
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(false, message, null));
+    }
+
+    @ExceptionHandler(OAuth2AuthenticationException.class)
+    public ResponseEntity<ApiResponse> handleOAuth2AuthenticationException(OAuth2AuthenticationException ex) {
+        String message = "Token is invalid";
+        
+        String errorCode = ex.getError().getErrorCode();
+        if (errorCode != null && errorCode.toLowerCase().contains("expired")) {
+            message = "Token is expired";
+        } else {
+            String description = ex.getError().getDescription();
+            if (description != null && description.toLowerCase().contains("expired")) {
+                message = "Token is expired";
+            }
+        }
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiResponse(false, message, null));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
