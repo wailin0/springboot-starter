@@ -2,6 +2,8 @@ package com.itwizard.starter.modules.auth.controller;
 
 import com.itwizard.starter.util.ApiResponse;
 import com.itwizard.starter.modules.auth.dto.LoginRequest;
+import com.itwizard.starter.modules.auth.dto.LoginResponseDto;
+import com.itwizard.starter.modules.auth.dto.RefreshTokenRequestDto;
 import com.itwizard.starter.modules.auth.dto.RegisterRequest;
 import com.itwizard.starter.modules.auth.service.AuthService;
 import com.itwizard.starter.util.ResponseUtil;
@@ -27,14 +29,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
-        String token = authService.login(request);
-        return ResponseUtil.success("Login successful", token);
+    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) throws Exception {
+        LoginResponseDto tokens = authService.login(request);
+        return ResponseUtil.success("Login successful", tokens);
     }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
         return ResponseUtil.created("User registered successfully", null);
+    }
+
+    @PostMapping("/token/refresh")
+    public ResponseEntity<ApiResponse> register(@Valid @RequestBody RefreshTokenRequestDto request) throws Exception {
+        String newAccessToken = authService.refreshNewAccessToken(request.getToken());
+
+        return ResponseUtil.created("TODO(i18n): refresh new access-token", newAccessToken);
     }
 }
