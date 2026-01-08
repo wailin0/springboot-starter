@@ -1,6 +1,7 @@
 package com.itwizard.starter.util;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -33,9 +34,6 @@ public class RefreshTokenUtil {
       refreshToken.setRevoked(true);
       refreshToken.setRevokedAt(Instant.now());
       refreshToken.setReplacedById(this.currentRefreshTokenId);
-
-      // INFO: force delete refresh token
-      refreshTokenRepository.deleteById(refreshToken.getId());
 
       this.refreshTokenRepository.save(refreshToken);
     }
@@ -72,15 +70,32 @@ public class RefreshTokenUtil {
         .orElseThrow(() -> new ResourceNotFoundException(token));
 
     if (refreshToken.getExpiresAt().isBefore(Instant.now())) {
+      // INFO: force delete refresh token
+      deleteRefreshToken(refreshToken);
+
       throw new UnauthorizedException("TODO(i18n): Invalid refresh token");
     }
 
     if (refreshToken.isRevoked()) {
+      // INFO: force delete refresh token
+      deleteRefreshToken(refreshToken);
+
       throw new UnauthorizedException("TODO(i18n): Invalid refresh token");
     }
 
     this.revokeRefreshToken(refreshToken);
 
+    // INFO: force delete refresh token
+    deleteRefreshToken(refreshToken);
+
     return refreshToken.getUser();
+  }
+
+  private void deleteRefreshToken(RefreshToken token) {
+    Optional<RefreshToken> dbToken = refreshTokenRepository.findById(token.getId());
+
+    if (dbToken.isPresent()) {
+      refreshTokenRepository.deleteById(token.getId());
+    }
   }
 }
