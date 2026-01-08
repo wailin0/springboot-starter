@@ -18,7 +18,6 @@ import com.itwizard.starter.modules.auth.dto.JwtPayload;
 import com.itwizard.starter.modules.auth.entity.RefreshToken;
 import com.itwizard.starter.modules.auth.entity.User;
 import com.itwizard.starter.modules.auth.repository.RefreshTokenRepository;
-import com.itwizard.starter.modules.user.service.UserProfileService;
 import com.itwizard.starter.util.SecretGenerator;
 import com.itwizard.starter.util.TokenGenerateParam;
 
@@ -40,9 +39,6 @@ public class TokenService {
 
   private final RefreshTokenRepository refreshTokenRepository;
 
-  // Third-party services
-  private final UserProfileService userService;
-
   private Long currentRefreshTokenId = null;
 
   public String generateAccessToken(JwtPayload jwtPayload) {
@@ -60,13 +56,11 @@ public class TokenService {
     return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
   }
 
-  public String generateRefreshToken(Long userId, TokenGenerateParam param) throws Exception {
+  public String generateRefreshToken(User user, TokenGenerateParam param) throws Exception {
     Instant expirationTime = Instant.now().plusSeconds(refreshTokenExpiration);
 
     String token = this.secretGenerator.generateString(32);
     String lookup = this.secretGenerator.hmac(token);
-
-    var user = userService.getUserById(userId);
 
     var refreshToken = refreshTokenRepository.save(RefreshToken
         .builder()

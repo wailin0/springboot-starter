@@ -19,73 +19,73 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
-    private final TokenService tokenService;
+  private final TokenService tokenService;
 
-    @Transactional
-    public User register(RegisterRequest request) {
-        // Check if user already exists
-        if (userRepository.findByUsername(request.getUsername()) != null) {
-            throw new ValidationException("User already exists");
-        }
-
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("USER");
-        user.setEnabled(true);
-
-        return userRepository.save(user);
+  @Transactional
+  public User register(RegisterRequest request) {
+    // Check if user already exists
+    if (userRepository.findByUsername(request.getUsername()) != null) {
+      throw new ValidationException("User already exists");
     }
 
-    public LoginResponseDto login(LoginRequest request, TokenGenerateParam param) throws Exception {
-        User user = userRepository.findByUsername(request.getUsername());
+    User user = new User();
+    user.setUsername(request.getUsername());
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
+    user.setRole("USER");
+    user.setEnabled(true);
 
-        if (user == null) {
-            throw new ResourceNotFoundException("User not found");
-        }
+    return userRepository.save(user);
+  }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new UnauthorizedException("Incorrect password");
-        }
+  public LoginResponseDto login(LoginRequest request, TokenGenerateParam param) throws Exception {
+    User user = userRepository.findByUsername(request.getUsername());
 
-        if (!Boolean.TRUE.equals(user.getEnabled())) {
-            throw new UnauthorizedException("User account is disabled");
-        }
-
-        JwtPayload jwtPayload = JwtPayload.builder()
-                .username(user.getUsername())
-                .role(user.getRole())
-                .build();
-
-        String accessToken = tokenService.generateAccessToken(jwtPayload);
-        String refreshToken = tokenService.generateRefreshToken(user.getId(), param);
-
-        return LoginResponseDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+    if (user == null) {
+      throw new ResourceNotFoundException("User not found");
     }
 
-    public LoginResponseDto refreshNewAccessToken(
-            String oldToken, TokenGenerateParam param) throws Exception {
-
-        User user = this.tokenService.revokeRefreshToken(oldToken);
-
-        JwtPayload jwtPayload = JwtPayload.builder()
-                .username(user.getUsername())
-                .role(user.getRole())
-                .build();
-
-        String accessToken = tokenService.generateAccessToken(jwtPayload);
-        String refreshToken = tokenService.generateRefreshToken(user.getId(), param);
-
-        return LoginResponseDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+      throw new UnauthorizedException("Incorrect password");
     }
+
+    if (!Boolean.TRUE.equals(user.getEnabled())) {
+      throw new UnauthorizedException("User account is disabled");
+    }
+
+    JwtPayload jwtPayload = JwtPayload.builder()
+        .username(user.getUsername())
+        .role(user.getRole())
+        .build();
+
+    String accessToken = tokenService.generateAccessToken(jwtPayload);
+    String refreshToken = tokenService.generateRefreshToken(user, param);
+
+    return LoginResponseDto.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
+  }
+
+  public LoginResponseDto refreshNewAccessToken(
+      String oldToken, TokenGenerateParam param) throws Exception {
+
+    User user = this.tokenService.revokeRefreshToken(oldToken);
+
+    JwtPayload jwtPayload = JwtPayload.builder()
+        .username(user.getUsername())
+        .role(user.getRole())
+        .build();
+
+    String accessToken = tokenService.generateAccessToken(jwtPayload);
+    String refreshToken = tokenService.generateRefreshToken(user, param);
+
+    return LoginResponseDto.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
+  }
 }
