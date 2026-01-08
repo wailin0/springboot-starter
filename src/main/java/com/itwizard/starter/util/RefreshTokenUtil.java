@@ -34,6 +34,9 @@ public class RefreshTokenUtil {
       refreshToken.setRevokedAt(Instant.now());
       refreshToken.setReplacedById(this.currentRefreshTokenId);
 
+      // INFO: force delete refresh token
+      refreshTokenRepository.deleteById(refreshToken.getId());
+
       this.refreshTokenRepository.save(refreshToken);
     }
   }
