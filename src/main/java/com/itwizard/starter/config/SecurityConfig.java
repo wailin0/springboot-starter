@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 public class SecurityConfig {
 
 
-    @Value("${jwt.secret}")
+    @Value("${auth.token.access-token-secret}")
     private String jwtSecret;
 
     @Bean

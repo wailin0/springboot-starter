@@ -8,7 +8,6 @@ import com.itwizard.starter.modules.auth.dto.LoginRequest;
 import com.itwizard.starter.modules.auth.dto.LoginResponseDto;
 import com.itwizard.starter.modules.auth.dto.RegisterRequest;
 import com.itwizard.starter.modules.user.repository.UserRepository;
-import com.itwizard.starter.util.JwtUtil;
 import com.itwizard.starter.util.TokenGenerateParam;
 import com.itwizard.starter.modules.auth.dto.JwtPayload;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
+
     private final PasswordEncoder passwordEncoder;
+
+    private final TokenService tokenService;
 
     @Transactional
     public User register(RegisterRequest request) {
@@ -60,8 +61,8 @@ public class AuthService {
                 .role(user.getRole())
                 .build();
 
-        String accessToken = jwtUtil.generateToken(jwtPayload);
-        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), param);
+        String accessToken = tokenService.generateAccessToken(jwtPayload);
+        String refreshToken = tokenService.generateRefreshToken(user.getId(), param);
 
         return LoginResponseDto.builder()
                 .accessToken(accessToken)
@@ -72,15 +73,15 @@ public class AuthService {
     public LoginResponseDto refreshNewAccessToken(
             String oldToken, TokenGenerateParam param) throws Exception {
 
-        User user = this.jwtUtil.revokeRefreshToken(oldToken);
+        User user = this.tokenService.revokeRefreshToken(oldToken);
 
         JwtPayload jwtPayload = JwtPayload.builder()
                 .username(user.getUsername())
                 .role(user.getRole())
                 .build();
 
-        String refreshToken = this.jwtUtil.generateRefreshToken(user.getId(), param);
-        String accessToken = this.jwtUtil.generateToken(jwtPayload);
+        String accessToken = tokenService.generateAccessToken(jwtPayload);
+        String refreshToken = tokenService.generateRefreshToken(user.getId(), param);
 
         return LoginResponseDto.builder()
                 .accessToken(accessToken)
