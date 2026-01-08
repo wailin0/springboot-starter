@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TokenService {
 
-  @Value("${jwt.expiry:3600}")
+  @Value("${auth.token.access-token-expiry:3600}")
   private long accessTokenExpiration;
 
   @Value("${auth.token.refresh-token-expiry:604800}")
